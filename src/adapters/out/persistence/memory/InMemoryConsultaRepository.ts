@@ -24,6 +24,16 @@ export class InMemoryConsultaRepository implements ConsultaRepository {
     return results;
   }
 
+  async findByPacienteId(idpaciente: number): Promise<Consulta[]> {
+    const results: Consulta[] = [];
+    for (const consulta of this.consultas.values()) {
+      if (consulta.paciente.idpaciente === idpaciente) {
+        results.push(consulta);
+      }
+    }
+    return results;
+  }
+
   async save(consulta: Consulta): Promise<void> {
     const id = consulta.idconsulta ?? this.nextId++;
     if (consulta.idconsulta === undefined) {

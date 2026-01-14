@@ -12,6 +12,8 @@ export class Consulta {
   private _idadeCrianca: number;
   private _novoPaciente: boolean;
   private _agendada: boolean;
+  private _pago: boolean;
+  private _historicoObservacoes: string[];
   private _prontuario?: Prontuario;
 
   constructor(params: {
@@ -22,14 +24,18 @@ export class Consulta {
     idadeCrianca: number;
     novoPaciente: boolean;
     agendada: boolean;
+  pago?: boolean;
+  historicoObservacoes?: string[];
   }) {
     this._idconsulta = params.idconsulta;
     this._paciente = params.paciente;
     this._medico = params.medico;
     this._dataHora = params.dataHora;
-    this._idadeCrianca = params.idadeCrianca;
-    this._novoPaciente = params.novoPaciente;
-    this._agendada = params.agendada;
+  this._idadeCrianca = params.idadeCrianca;
+  this._novoPaciente = params.novoPaciente;
+  this._agendada = params.agendada;
+  this._pago = params.pago ?? false;
+  this._historicoObservacoes = params.historicoObservacoes ?? [];
   }
 
   get idconsulta(): number | undefined {
@@ -64,6 +70,14 @@ export class Consulta {
     return this._agendada;
   }
 
+  get pago(): boolean {
+    return this._pago;
+  }
+
+  get historicoObservacoes(): string[] {
+    return [...this._historicoObservacoes];
+  }
+
   get prontuario(): Prontuario | undefined {
     return this._prontuario;
   }
@@ -74,5 +88,13 @@ export class Consulta {
     }
     this._prontuario = prontuario;
     this._agendada = false;
+  }
+
+  public marcarPago(): void {
+    this._pago = true;
+  }
+
+  public adicionarObservacao(obs: string): void {
+    this._historicoObservacoes.push(obs);
   }
 }

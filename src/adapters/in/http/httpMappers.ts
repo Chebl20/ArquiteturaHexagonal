@@ -84,6 +84,8 @@ export type ConsultaResponseDTO = {
   idadeCrianca: number;
   novoPaciente: boolean;
   agendada: boolean;
+  pago: boolean;
+  historicoObservacoes: string[];
   nomeCrianca: string;
   paciente: PacienteResponseDTO;
   medico: MedicoResponseDTO;
@@ -192,6 +194,8 @@ export function toConsultaResponseDTO(consulta: Consulta): ConsultaResponseDTO {
     idadeCrianca: consulta.idadeCrianca,
     novoPaciente: consulta.novoPaciente,
     agendada: consulta.agendada,
+  pago: consulta.pago,
+  historicoObservacoes: consulta.historicoObservacoes,
     nomeCrianca: consulta.paciente.nomeCrianca,
     paciente: toPacienteResponseDTO(consulta.paciente),
     medico: toMedicoResponseDTO(consulta.medico),
