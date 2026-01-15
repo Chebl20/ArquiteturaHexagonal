@@ -20,32 +20,50 @@ describe("RegistrarProntuarioUseCase", () => {
     const exameRepository = new InMemoryExameRepository();
     const prontuarioRepository = new InMemoryProntuarioRepository();
 
-    const paciente = new Paciente(
-      "João da Silva",
-      "111.111.111-11",
-      "joao@example.com",
-      new Telefone("11", "999999999"),
-      new Endereco(
-        "Rua A",
-        "123",
-        "Centro",
-        "São Paulo",
-        "SP",
-        "01001000"
-      )
-    );
-    const medico = new Medico(
-      "Dr. Carlos",
-      "123456",
-      "Cardiologista"
-    );
-    const consulta = new Consulta(paciente, medico, new Date());
+    const endereco = new Endereco({
+      logradouro: "Rua A",
+      numero: "123",
+      bairro: "Centro",
+      cidade: "São Paulo",
+      estado: "SP",
+      cep: "01001000",
+    });
+
+    const telefone = new Telefone({
+      numero: "(11) 99999-9999",
+      tipo: "celular",
+      responsavel: "João Silva",
+    });
+
+    const paciente = new Paciente({
+      nomeCrianca: "João da Silva",
+      nomeResponsavel: "João Silva",
+      dataNascimento: new Date("2018-05-15"),
+      sexo: "M",
+      endereco: endereco,
+      telefones: [telefone],
+    });
+
+    const medico = new Medico({
+      nomeMedico: "Dr. Carlos",
+      crm: "123456/SP",
+    });
+
+    const consulta = new Consulta({
+      paciente: paciente,
+      medico: medico,
+      dataHora: new Date(),
+      idadeCrianca: 6,
+      novoPaciente: true,
+      agendada: true,
+    });
+
     await consultaRepository.save(consulta);
 
-    const medicamento = new Medicamento("Paracetamol", "Genérico");
+    const medicamento = new Medicamento({ nomeMedicamento: "Paracetamol 500mg" });
     await medicamentoRepository.save(medicamento);
 
-    const exame = new Exame("Hemograma", "Exame de sangue completo");
+    const exame = new Exame({ nomeExame: "Hemograma Completo" });
     await exameRepository.save(exame);
 
     const useCase = new RegistrarProntuarioUseCaseImpl(
@@ -56,22 +74,22 @@ describe("RegistrarProntuarioUseCase", () => {
     );
 
     const prontuario = await useCase.execute({
-      consultaId: consulta.id,
+      consultaId: consulta.idconsulta!,
       peso: 80,
       altura: 1.8,
-      sintomas: "Dor de cabeça",
-      observacao: "N/A",
+      descricaoSintomas: "Dor de cabeça",
+      observacaoClinica: "N/A",
       prescricoes: [
         {
-          medicamentoId: medicamento.id,
+          medicamentoId: medicamento.idmedicamento!,
           dosagem: "1 comprimido",
           administracao: "Via oral",
-          tempo: "A cada 8 horas",
+          tempoUso: "A cada 8 horas",
         },
       ],
       exames: [
         {
-          exameId: exame.id,
+          exameId: exame.idexame!,
         },
       ],
     });
@@ -81,7 +99,7 @@ describe("RegistrarProntuarioUseCase", () => {
     expect(prontuario.prescricoes.length).toBe(1);
     expect(prontuario.exames.length).toBe(1);
 
-    const consultaSalva = await consultaRepository.findById(consulta.id);
+    const consultaSalva = await consultaRepository.findById(consulta.idconsulta!);
     expect(consultaSalva?.prontuario).toBeDefined();
   });
 
@@ -100,11 +118,11 @@ describe("RegistrarProntuarioUseCase", () => {
 
     await expect(
       useCase.execute({
-        consultaId: "invalid-id",
+        consultaId: 999,
         peso: 80,
         altura: 1.8,
-        sintomas: "Dor de cabeça",
-        observacao: "N/A",
+        descricaoSintomas: "Dor de cabeça",
+        observacaoClinica: "N/A",
         prescricoes: [],
         exames: [],
       })

@@ -16,6 +16,9 @@ import { ConsultarHistoricoProntuarioUseCaseImpl } from "@/application/usecases/
 import { ConsultarHistoricoPesoUseCaseImpl } from "@/application/usecases/ConsultarHistoricoPesoUseCaseImpl";
 import { ConsultarUltimosLancamentosUseCaseImpl } from "@/application/usecases/ConsultarUltimosLancamentosUseCaseImpl";
 import { ListarConsultasDoDiaUseCaseImpl } from "@/application/usecases/ListarConsultasDoDiaUseCaseImpl";
+import { AgendarConsultaUseCaseImpl } from "@/application/usecases/AgendarConsultaUseCaseImpl";
+import { VisualizarHistoricoUseCaseImpl } from "@/application/usecases/VisualizarHistoricoUseCaseImpl";
+import { ProcessarPagamentoUseCaseImpl } from "@/application/usecases/ProcessarPagamentoUseCaseImpl";
 import { ListarExamesUseCaseImpl } from "@/application/usecases/ListarExamesUseCaseImpl";
 import { ListarMedicamentosUseCaseImpl } from "@/application/usecases/ListarMedicamentosUseCaseImpl";
 import { RegistrarProntuarioUseCaseImpl } from "@/application/usecases/RegistrarProntuarioUseCaseImpl";
@@ -58,6 +61,16 @@ const listarConsultasDoDiaUseCase = new ListarConsultasDoDiaUseCaseImpl(
 const buscarConsultaPorIdUseCase = new BuscarConsultaPorIdUseCaseImpl(
   consultaRepository
 );
+const agendarConsultaUseCase = new AgendarConsultaUseCaseImpl(
+  consultaRepository,
+  pacienteRepository
+);
+const visualizarHistoricoUseCase = new VisualizarHistoricoUseCaseImpl(
+  consultaRepository
+);
+const processarPagamentoUseCase = new ProcessarPagamentoUseCaseImpl(
+  consultaRepository
+);
 const consultarHistoricoProntuarioUseCase =
   new ConsultarHistoricoProntuarioUseCaseImpl(prontuarioRepository);
 const consultarHistoricoPesoUseCase = new ConsultarHistoricoPesoUseCaseImpl(
@@ -90,7 +103,10 @@ DomainEvents.register((event: DomainEvent) => {
 // Controllers
 const consultaController = new ConsultaController(
   listarConsultasDoDiaUseCase,
-  buscarConsultaPorIdUseCase
+  buscarConsultaPorIdUseCase,
+  agendarConsultaUseCase,
+  visualizarHistoricoUseCase,
+  processarPagamentoUseCase
 );
 const medicamentoController = new MedicamentoController(listarMedicamentosUseCase);
 const exameController = new ExameController(listarExamesUseCase);
